@@ -1,29 +1,36 @@
 const express=require("express");
 const app=express(); 
-//writing auth code
-const {userAuth,adminAuth}=require("./middlewares/auth")
-app.use("/admin",adminAuth);
-app.post("/user/login",(req,res)=>{
-    res.send("Welcome to the page!")
+const{connectDb}=require("./config/database") 
+const {User}=require("./models/user")
+//adding data to the database
+app.post("/signup",async (req,res)=>{
+    //creating instance(object) of User Model
+    const newUser1=new User({
+        firstName:"Rohit",
+        lastName:"Sharma",
+        emailId:"rohit@gmail.com",
+        password:"rohit123",
+        age:37,
+        gender:"male"
+    })
+   try {
+    await newUser1.save();
+    res.send("User created Successfully!")
+   } catch (err) {
+    res.status(400).send("Error creating in user,Error:",err)
+   }
 })
-app.get("/user/useApp",userAuth,(req,res)=>{
-    res.send("PLease fill the form to continue")
+
+connectDb()
+.then(()=>{
+    console.log("Database connected successfully!")
+    app.listen(7777,()=>{
+        console.log("SERVER IS CREATED SUCCESSFULLY!");
+    });
 })
-app.get("/admin/getData",(req,res)=>{
-  res.send({name:"Krish",age:"21",semester:"6"})
-   })
-
-app.get("/admin/deleteUser",(req,res)=>{
-        res.send("User Deleted")
-})
+.catch((err)=>console.log("Database not connected,error:",err))
 
 
 
-
-
-
-app.listen(7777,()=>{
-    console.log("SERVER IS CREATED SUCCESSFULLY!");
-});
 
 

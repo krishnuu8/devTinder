@@ -49,6 +49,34 @@ app.delete("/user",async (req,res)=>{
         res.status(400).send("Error in deleting your account,Error:",err)
     }
 })
+//update user
+app.patch("/user",async (req,res)=>{
+    try {
+        const userId=req.body.userId
+        const data=req.body
+        const user=await User.findByIdAndUpdate(userId,data) 
+        console.log(user)       //default is before
+        res.send("Data updated Sucessfully")
+    } catch (err) {
+        res.status(400).send("Error in updating your details,Error:",err)
+    }
+
+})
+app.patch("/userbyemail",async (req,res)=>{
+    try {
+        const email=req.body.emailId
+        const data=req.body
+        const user=await User.findOneAndUpdate({emailId:email},data) 
+        console.log(user)       //default is before
+        res.send("Data updated Sucessfully")
+    } catch (err) {
+        res.status(400).send("Error in updating your details,Error:",err)
+    }
+
+})
+
+
+
 
 connectDb()
 .then(()=>{

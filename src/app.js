@@ -2,17 +2,14 @@ const express=require("express");
 const app=express(); 
 const{connectDb}=require("./config/database") 
 const {User}=require("./models/user")
-//adding data to the database
+//now we need to convert JSON=>js object so that server can read it and we can manupilate it
+app.use(express.json())
 app.post("/signup",async (req,res)=>{
-    //creating instance(object) of User Model
-    const newUser1=new User({
-        firstName:"Rohit",
-        lastName:"Sharma",
-        emailId:"rohit@gmail.com",
-        password:"rohit123",
-        age:37,
-        gender:"male"
-    })
+
+     
+
+    // creating instance(object) of User Model
+    const newUser1=new User(req.body)
    try {
     await newUser1.save();
     res.send("User created Successfully!")

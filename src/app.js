@@ -62,15 +62,17 @@ app.patch("/user/:userId",async (req,res)=>{
         // }
         // const objectId = new mongoose.Types.ObjectId(userId);
         const data=req.body //if i include userId in my body ,so then i will need ti include it in update allowed array which i dont want to
-        const UPDATES_ALLOWED=["password","gender","photoURrl","about","skills"] //we dont want to allow update in userId
+        const UPDATES_ALLOWED=["password","gender","photoUrl","about","skills"] //we dont want to allow update in userId
         const isAllowed=Object.keys(data).every((k)=>UPDATES_ALLOWED.includes(k)) //matching two arrays:UPDATES_ALLOWED AND KEYS ARRAY 
         if(!isAllowed){
         throw new Error("Update not allowed!")
         }
-        if(data?.skills.length>10){
+        if(data?.skills&&data?.skills.length>10){
             throw new Error("Skills cannot be more than 10")
         }
-        const user=await User.findByIdAndUpdate(userId,data) 
+        const user=await User.findByIdAndUpdate(userId,data,{
+            runValidators:true
+        }) 
         console.log(userId)
         console.log(user)       //default is before
         res.send("Data updated Sucessfully")
@@ -106,8 +108,6 @@ connectDb()
 })
 .catch((err)=>console.log("Database not connected,error:",err))
 
-let obj={a:1,b:2,c:3}
-console.log(Object.keys(obj))
 
 
 

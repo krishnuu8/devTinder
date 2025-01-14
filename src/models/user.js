@@ -1,4 +1,5 @@
 const mongoose=require("mongoose")
+const validator=require("validator")
 const userSchema=new mongoose.Schema({
     firstName:{
         type: String,
@@ -14,11 +15,20 @@ const userSchema=new mongoose.Schema({
         required:true,
         unique:true,
         lowercase:true,
-        match:[/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/]
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid Email Address!")
+            }
+        }
     },
     password:{
         type:String,
-        required:true
+        required:true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Please enter strong password!")
+            }
+        }
     },
     age:{
         type:Number,
@@ -34,7 +44,12 @@ const userSchema=new mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://www.istockphoto.com/vector/user-profile-icon-in-flat-style-member-avatar-vector-illustration-on-isolated-gm1460685694-494809101"
+        default:"https://www.istockphoto.com/vector/user-profile-icon-in-flat-style-member-avatar-vector-illustration-on-isolated-gm1460685694-494809101",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Invalid Photo URL!")
+            }
+        }
     },
     about:{
         type:String,

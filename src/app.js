@@ -3,6 +3,8 @@ const app=express();
 const mongoose=require("mongoose")
 const{connectDb}=require("./config/database") 
 const {User}=require("./models/user")
+const {validateUserData}=require("./utils/validation")
+const bcrpyt=require("bcrypt")
 //now we need to convert JSON=>js object so that server can read it and we can manupilate it
 app.use(express.json())
 //get user by email
@@ -31,14 +33,24 @@ res.status(400).send("Something went Wrong")
 })
 //create a user
 app.post("/signup",async (req,res)=>{
-    // creating instance(object) of User Model
-    const newUser1=new User(req.body)
    try {
+     //validating user data
+     validateUserData(req)
+
+     //encrypting passwords
+     
+
+        const {emailId,password,firstName,lastName} =req.body
+    const hashPassword=await bcrpyt.hash(password,10)
+     // creating instance(object) of User Model
+     const newUser1=new User({
+        firstName,lastName,emailId,password:hashPassword
+     })
     await newUser1.save();
     res.send("User created Successfully!")
    } catch (err) {
     
-    res.status(400).send("Error creating in user,Error:"+err)
+    res.status(400).send("ERROR: "+err)
 }
 })
 //delete a user
@@ -67,7 +79,7 @@ app.patch("/user/:userId",async (req,res)=>{
         if(!isAllowed){
         throw new Error("Update not allowed!")
         }
-        if(data?.skills&&data?.skills.length>10){
+        if(data?.skills.length>10){
             throw new Error("Skills cannot be more than 10")
         }
         const user=await User.findByIdAndUpdate(userId,data,{

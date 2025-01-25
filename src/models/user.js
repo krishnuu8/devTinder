@@ -1,5 +1,6 @@
 const mongoose=require("mongoose")
 const validator=require("validator")
+const bcrpyt=require("bcrypt")
 const userSchema=new mongoose.Schema({
     firstName:{
         type: String,
@@ -59,8 +60,16 @@ const userSchema=new mongoose.Schema({
     type:[String]
     }
 },{timestamps:true})
+userSchema.methods.validatePassword=async function(passwordInputByUser){
+    const user=this;
+    const passwordHash=user.password //getting password from db
+    const isPasswordValid=await bcrpyt.compare(passwordInputByUser,passwordHash)
+    return isPasswordValid;
+    }
+    
 const User=mongoose.model("User",userSchema)
 module.exports={User}
+
 
 
 

@@ -11,4 +11,11 @@
             throw new Error("Please enter a strong password!")
         }
     }
-module.exports={validateUserData}
+    const validateEditProfileData=(req)=>{
+        const allowedEditFields=["firstName","lastName","age","gender","about","photoUrl","skills"]
+            const isEditAllowed=Object.keys(req.body).every((field)=>{
+           return allowedEditFields.includes(field)
+        })
+        return isEditAllowed;
+    }
+module.exports={validateUserData,validateEditProfileData}

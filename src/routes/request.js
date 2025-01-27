@@ -8,7 +8,7 @@ try{
 const toUserId=req.params.toUserId
 const fromUserId=req.user._id
 const status=req.params.status
-const allowedStatus=["intersted","ignored"]
+const allowedStatus=["interested","ignored"]
 if(!allowedStatus.includes(status)){
 return res.json({message:"Invalid status type:"+status})
 }
@@ -51,4 +51,31 @@ res.json({
     res.status(400).send("ERROR: "+err.message)
 }
  })
+requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=>{
+try {
+    const {status,requestId}=req.params
+   const allowedStatus=["accepted","rejected"]
+   const loggedInUser=req.user
+    if(!allowedStatus.includes(status)){
+        return res.status(400).send("Status not allowed!")
+    }
+const connectionRequest=await ConnectionRequest.findOne({
+    _id:requestId,
+    toUserId:loggedInUser._id,
+    status:"interested" //checked for the validations :whether the request has been sent or not by chekcing the _id and stuatus type intersted only;also verified that the person to whom the request is sent is only able to accept or reject the
+})
+if(!connectionRequest){
+    return res.status(400).send("No connection request found!")
+}
+connectionRequest.status=status
+const data=await connectionRequest.save()
+res.json({message:`Connection Request ${connectionRequest.status}`,data})
+} catch (err) {
+    res.status(400).send("ERROR: "+err.message)
+}
+
+
+
+
+})
  module.exports={requestRouter}

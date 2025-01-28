@@ -33,9 +33,6 @@ connectDb()
 })
 .catch((err)=>console.log("Database not connected,error:",err))
 
-const num=Date.now()
-const date=new Date(num)
-console.log(date)
 
 const arr=["name","class","studentId","section"]
 const obj={

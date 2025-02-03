@@ -13,11 +13,11 @@ authRouter.post("/signup",async (req,res)=>{
       //encrypting passwords
       
  
-         const {emailId,password,firstName,lastName,gender} =req.body
+         const {emailId,password,firstName,lastName,gender,photoUrl} =req.body
      const hashPassword=await bcrpyt.hash(password,10)
       // creating instance(object) of User Model
       const newUser1=new User({
-         firstName,lastName,emailId,password:hashPassword,gender
+         firstName,lastName,emailId,password:hashPassword,gender,photoUrl
       })
      await newUser1.save();
      res.send("User created Successfully!")
@@ -40,8 +40,10 @@ authRouter.post("/login",async (req,res)=>{
                 //generate JWT Token
                     const token=jwt.sign({_id:user._id},"DEV@TINDER$790",{expiresIn:"1d"})
                 // Sending this token back to User
-                res.cookie("token",token)
-                res.send(`${user.firstName} logged in!`)
+                res.cookie("token",token,{
+                    expires:new Date(Date.now() + 8*3600000)
+                })
+                res.send(user)
             }
             else{
                throw new Error("Invalid Credentials!")

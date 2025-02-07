@@ -45,5 +45,5 @@ const obj={
     "name":"krish",
     "class":"6 sem"
 }
-console.log(Object.keys(obj).every((field)=>arr.includes(field)))
+
 

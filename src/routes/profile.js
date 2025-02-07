@@ -25,7 +25,10 @@ console.log(loggedInUser)
 Object.keys(req.body).forEach((key)=>(loggedInUser[key]=req.body[key]))
 console.log(loggedInUser)
 await loggedInUser.save()
-res.send(`${loggedInUser.firstName},Your profile has been updated!`)
+res.json({
+    message:`${loggedInUser.firstName},Your profile has been updated!`,
+    data:loggedInUser    
+})
 }
 catch(err){
         res.status(400).send("ERROR: "+err.message)
